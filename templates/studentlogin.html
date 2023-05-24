@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PROCTOR</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/studentlogin.css') }}">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://kit.fontawesome.com/742298f6f6.js" crossorigin="anonymous"></script>
+</head>
+<body>
+	<header>
+		<h1>Student Login</h1>
+	</header>
+    <div class="signup">
+        <form>
+            <label for="student_name">Name:</label>
+            <input type="text" id="student_name" name="student_name" required>
+
+            <label for="student_email">Student Email:</label>
+            <input type="email" id="student_email" name="student_email" required>
+    
+            <label for="student_password">Password:</label>
+            <input type="password" id="student_password" name="student_password" required>
+    
+            <button type="button" id="submit">Student Login</button>
+        </form>
+        <div class="login">
+            <a onclick="window.location.href='{{ url_for('studentsignup') }}'">Sign up</a>
+        </div>
+    </div>
+    
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-app.js";
+        import { getDatabase } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-auth.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+       // Your web app's Firebase configuration
+       const firebaseConfig = {
+          apiKey: "AIzaSyB_jLJFUB1L7C8n8-9PHu8sbmxyPoKIr5k",
+          authDomain: "proctor-watch.firebaseapp.com",
+          databaseURL: "https://proctor-watch-default-rtdb.firebaseio.com",
+          projectId: "proctor-watch",
+          storageBucket: "proctor-watch.appspot.com",
+          messagingSenderId: "375719442930",
+          appId: "1:375719442930:web:51fb94434165515540d36b"
+        };
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth();
+    
+        submit.addEventListener('click', (e) => {
+            e.preventDefault();
+    
+            const email = document.getElementById('student_email').value;
+            const password = document.getElementById('student_password').value;
+            const name = document.getElementById('student_name').value;
+
+    
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed in
+                    const studentsignup = userCredential.studentsignup;
+                    alert('Signed in!');
+                   
+                    // Redirect to student dashboard with name parameter
+                    window.location.href = `{{ url_for('student') }}?name=${encodeURIComponent(name)}`;
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    alert(errorMessage);
+                });
+        });
+    
+    </script>
+    

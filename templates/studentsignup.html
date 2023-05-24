@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PROCTOR</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/studentsignup.css') }}">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://kit.fontawesome.com/742298f6f6.js" crossorigin="anonymous"></script>
+</head>
+<body>
+	<header>
+		<h1>Student Sign Up</h1>
+	</header>
+
+	<div class="signup">
+        <form>
+            <label for="studentname">Student Name:</label>
+            <input type="text" id="studentname" name="studentname" required>
+
+            <label for="studentid">Student ID:</label>
+            <input type="text" id="studentid" name="studentid" required>
+
+            <div style="display: flex; align-items: center;">
+                <label for="rollno">Roll No: </label>
+                <input type="text" id="rollno" name="rollno" style="margin-right: 10px;">
+                <label for="semester">Sem:</label>
+                <input type="text" id="semester" name="semester">
+            </div>
+            
+    
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+    
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+    
+            <label for="confirm-password">Confirm Password:</label>
+            <input type="password" id="confirm-password" name="confirm-password" required>
+    
+            <button type="button" id="submit">Submit</button>
+        </form>
+        <div class="login">
+            <a onclick="window.location.href='{{ url_for('studentlogin') }}'">login</a>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-app.js";
+        import { getDatabase, set, ref } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-auth.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyB_jLJFUB1L7C8n8-9PHu8sbmxyPoKIr5k",
+          authDomain: "proctor-watch.firebaseapp.com",
+          databaseURL: "https://proctor-watch-default-rtdb.firebaseio.com",
+          projectId: "proctor-watch",
+          storageBucket: "proctor-watch.appspot.com",
+          messagingSenderId: "375719442930",
+          appId: "1:375719442930:web:51fb94434165515540d36b"
+        };
+      
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth();
+
+        const submit = document.getElementById('submit');
+
+        submit.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            var studentname = document.getElementById('studentname').value;
+            var studentid = document.getElementById('studentid').value;
+            var rollno = document.getElementById('rollno').value;
+            var semester = document.getElementById('semester').value;
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed in 
+                    const user = userCredential.user;
+
+                    set(ref(database, 'studentsignup/' +user.uid),{
+
+                     studentname: studentname,
+                      studentid: studentid,
+                      rollno: rollno,
+                      semester: semester,
+                      email: email,
+                      password: password
+        
+
+                    })
+                    alert('user created!');
+                    // ...
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    alert(errorMessage);
+                });
+        });
+
+
+      </script>
+</body>
+</html>

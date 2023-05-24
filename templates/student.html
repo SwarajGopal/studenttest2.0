@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Student Dashboard</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/student.css') }}">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/742298f6f6.js" crossorigin="anonymous"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+		var usbDetected = false; // Flag to track USB detection status
+	
+		$(document).ready(function() {
+			// Function to check for USB insertion
+			function checkUSB() {
+				$.ajax({
+					url: "/check_usb/{{ name }}",  // Pass the username as a URL parameter
+					success: function(response) {
+						console.log("Checked for USB insertion.");
+						if (response && response.message === "USB detected" && !usbDetected) {
+							usbDetected = true; // Set the flag to true when USB is detected
+							showAlert("Warning: USB device inserted!");
+						} else if (response && response.message !== "USB detected" && usbDetected) {
+							usbDetected = false; // Set the flag to false when USB is unplugged
+						}
+					}
+				});
+			}
+			
+	
+			// Function to show the alert message
+			function showAlert(message) {
+				alert(message);
+			}
+	
+			// Check for USB insertion every 5 seconds
+			setInterval(checkUSB, 5000);
+		});
+	</script>
+	</head>
+<body>
+	<header>
+		<h1>Student Dashboard</h1>
+		<a href="#" onclick="window.location.href='{{ url_for('studentlogin') }}'" class="logout-btn">Logout</a>
+	</header>
+    <section>
+	<main>
+		<div class="tab">
+			<button class="tablinks active" onclick="openCity(event, 'Exam')"><i class="fas fa-book"></i> Exam</button>
+			<button class="tablinks" onclick="openCity(event, 'ScreenMonitoring')"><i class="fas fa-desktop"></i> Webcam Monitoring</button>
+			<button class="tablinks" onclick="openCity(event, 'webMonitoring')"><i class="fas fa-desktop"></i> screen Monitoring</button>
+
+		</div>
+        
+
+		<div id="Exam" class="tabcontent active">
+			<h3>Exam Questions</h3>
+			<div class="timer">
+			  <div class="circle">
+				<span id="time">01:00:00</span>
+			  </div>
+			</div>
+			<div class="container34"></div>
+			<button class="start-button1">Start Exam</button>
+		  </div>
+		  
+		  <script>
+			const startButton = document.querySelector('.start-button1');
+			const container = document.querySelector('.container34');
+			const timer = document.querySelector('.timer');
+			const timerElement = document.getElementById('time');
+			let timeLeft = 3600; // 1 hour in seconds
+			let interval = null;
+		  
+			function formatTime(seconds) {
+			  let h = Math.floor(seconds / 3600);
+			  let m = Math.floor((seconds % 3600) / 60);
+			  let s = seconds % 60;
+			  return pad(h) + ':' + pad(m) + ':' + pad(s);
+			}
+		  
+			function pad(value) {
+			  return String(value).padStart(2, '0');
+			}
+		  
+			function countdown() {
+			  if (timeLeft <= 0) {
+				clearInterval(interval);
+				timerElement.innerHTML = "00:00:00";
+				return;
+			  }
+			  timerElement.innerHTML = formatTime(timeLeft);
+			  timeLeft--;
+			}
+		  
+			function startCountdown() {
+			  interval = setInterval(countdown, 1000);
+			  startButton.disabled = true;
+			}
+		  
+			startButton.addEventListener('click', () => {
+			  container.style.filter = 'none'; // Remove blur effect
+			  startCountdown(); // Start the timer countdown
+			});
+		  </script>
+		
+			<script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+			<script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
+			<script>
+				// Firebase configuration (replace with your own credentials)
+				var firebaseConfig = {
+					// Your Firebase configuration here
+					      // Your Firebase configuration here
+						  apiKey: "AIzaSyB_jLJFUB1L7C8n8-9PHu8sbmxyPoKIr5k",
+							authDomain: "proctor-watch.firebaseapp.com",
+							databaseURL: "https://proctor-watch-default-rtdb.firebaseio.com",
+							projectId: "proctor-watch",
+							storageBucket: "proctor-watch.appspot.com",
+							messagingSenderId: "375719442930",
+							appId: "1:375719442930:web:51fb94434165515540d36b"
+
+				};
+		
+				// Initialize Firebase
+				firebase.initializeApp(firebaseConfig);
+		
+				// Fetch questions from Firebase and display them
+				function fetchAndDisplayQuestions() {
+					const questionsContainer = document.querySelector('.container34');
+					const examRef = firebase.database().ref("exam/");
+		
+					examRef.on('value', function (snapshot) {
+						questionsContainer.innerHTML = '';
+		
+						snapshot.forEach(function (childSnapshot) {
+							const questionObj = childSnapshot.val();
+		
+							const questionElement = document.createElement('div');
+							questionElement.classList.add('question');
+		
+							const questionTextElement = document.createElement('p');
+							questionTextElement.classList.add('question-text');
+							questionTextElement.textContent = `Question ${questionObj.questionNumber}: ${questionObj.questionText}`;
+		
+							questionElement.appendChild(questionTextElement);
+		
+							questionsContainer.appendChild(questionElement);
+						});
+					});
+				}
+		
+				fetchAndDisplayQuestions();
+			</script>
+
+		</div>
+
+		<div id="ScreenMonitoring" class="tabcontent">
+			<style>
+				.container1 {
+				  display: flex;
+				  justify-content: center;
+				  align-items: center;
+				  height: 50vh; /* Adjust this value as needed */
+				}
+				
+				.container1 .row {
+				  width: 100%;
+				}
+				
+				.container1 .col-lg-8 {
+				  margin: auto;
+				  text-align: center;
+				}
+				</style>
+			<h3>Webcam Monitoring</h3>
+			<div class="container1">
+				<div class="row">
+					<div class="col-lg-8  offset-lg-2">
+						<h3 class="mt-5"></h3>
+						<img src="{{ url_for('video_feed', name=name) }}" width="70%">
+					</div>
+					
+				</div>
+		</div>
+		</div>
+		<div id="webMonitoring" class="tabcontent">
+			<h3>Screen Monitoring</h3>
+             <div class="container22">
+				    <form action="/start" method="POST">
+        <label for="server_ip">Server IP:</label>
+        <input type="text" id="server_ip" name="server_ip"><br><br>
+
+        <label for="server_port">Server Port:</label>
+        <input type="number" id="server_port" name="server_port"><br><br>
+
+        <input type="submit" value="Start Streaming">
+    </form>
+
+			 </div>
+		</div>
+
+        
+       
+	</main>
+    
+        <div id="wrapper">
+             <div id="chatbox"></div>
+             <form name="message" id="message-form">
+                 <input name="usermsg" type="text" id="usermsg" placeholder="Type your message..." />
+                 <button type="submit" id="submitmsg"><i class="fas fa-paper-plane"></i></button>
+             </form>
+         </div>
+     </section>
+     
+
+	<script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-database.js"></script>
+	
+  <script type="text/javascript"  src="{{ url_for('static',filename='script/student.js')  }}"></script>
+
+  
+</body>
+</html>

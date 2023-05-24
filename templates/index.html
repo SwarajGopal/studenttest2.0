@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PROCTOR</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://kit.fontawesome.com/742298f6f6.js" crossorigin="anonymous"></script>
+</head>
+<body>
+	 <!-- Navigation Bar -->
+	 <nav>
+		<span class="logo">Proctor Watch</span>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact Us</a></li>
+    
+        </ul>
+    </nav>
+	<div class="main-container">
+		
+		<div class="center-card">
+			<div class="flex-card">
+				
+				<div class="student">
+					<i class="fa-solid fa-users" style="color: black; font-size: 5rem;"></i>
+					<h1>Student</h1>
+					<button class='button' onclick="window.location.href='{{ url_for('studentlogin') }}'">login</button>
+					<p>Don't have an account? <a href="#" onclick="window.location.href='{{ url_for('studentsignup') }}'">Sign Up</a></p>
+			</section>
+				</div>
+				</div>
+			</div>
+		</div>
+	</div>
+  
+
+</body>
+</html>
