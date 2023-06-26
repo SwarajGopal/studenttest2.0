@@ -68,7 +68,7 @@ def send_warning_message(student_name):
     try:
         pc_name = os.environ['COMPUTERNAME']
         warning_data = {
-            'message': f'{student_name} on PC is looking away from the screen',
+            'message': f'{student_name} is looking away from the screen',
             'timestamp': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
         db_ref.child('warnings').push(warning_data)
@@ -178,7 +178,7 @@ if system_platform == 'Windows':
                 'message': f'User has inserted a USB device on PC :{pc_name} ',
                 'timestamp': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
-            db_ref.child('warnings').push(warning_data)
+            db_ref.child('USBnotifications').push(warning_data)
         except Exception as e:
             print('Error sending USB warning message:', str(e))
 
@@ -240,16 +240,16 @@ else:
     result = None
 
 
-def connect_to_server():
+def connect_to_server(host, port):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:
-        client_socket.connect(('192.168.192.54', 63333))
+        client_socket.connect((host, port))
         return client_socket
     except ConnectionRefusedError:
         print("Error: Connection refused. Retrying in 5 seconds...")
         time.sleep(5)
-        return connect_to_server()
+        return connect_to_server(host, port)
     except Exception as e:
         print(f"Error occurred while connecting: {str(e)}")
         exit(1)
@@ -283,16 +283,23 @@ def send_frame(client_socket):
 
     client_socket.close()
 
-def run_client():
-    while True:
-        client_socket = connect_to_server()
-        send_frame(client_socket)
+@app.route('/start_client', methods=['POST'])
+def start_client():
+    host = request.form['host']
+    port = int(request.form['port'])
 
-# Create a thread for the client code
-client_thread = threading.Thread(target=run_client)
+    client_socket = connect_to_server(host, port)
+    send_frame(client_socket)
 
-# Start the client thread
-client_thread.start()
+        # Create a thread for the client code
+    client_thread = threading.Thread(target=start_client)
+
+    # Start the client thread
+    client_thread.start()
+
+
+    return 'Client started successfully'
+
 
 
 if __name__ == '__main__':

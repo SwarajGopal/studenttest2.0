@@ -46,9 +46,47 @@
 	</header>
     <section>
 	<main>
+
+		<style>
+		 .floating-window {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+      padding: 16px;
+      width: 300px;
+    }
+
+    .video-container77 {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+	  left: 20px;
+    }
+
+
+
+		</style>
+       
+		<div class="floating-window">
+			<div class="video-container77">
+				<img src="{{ url_for('video_feed', name=name) }}" width="70%">
+			</div>
+		  </div>
+		
+		  <script>
+			document.querySelector('.close-btn').addEventListener('click', function() {
+			  document.querySelector('.floating-window').style.display = 'none';
+			});
+		  </script>
+		
+
+
+		
 		<div class="tab">
 			<button class="tablinks active" onclick="openCity(event, 'Exam')"><i class="fas fa-book"></i> Exam</button>
-			<button class="tablinks" onclick="openCity(event, 'ScreenMonitoring')"><i class="fas fa-desktop"></i> Webcam Monitoring</button>
 			<button class="tablinks" onclick="openCity(event, 'webMonitoring')"><i class="fas fa-desktop"></i> screen Monitoring</button>
 
 		</div>
@@ -173,31 +211,22 @@
 				  text-align: center;
 				}
 				</style>
-			<h3>Webcam Monitoring</h3>
-			<div class="container1">
-				<div class="row">
-					<div class="col-lg-8  offset-lg-2">
-						<h3 class="mt-5"></h3>
-						<img src="{{ url_for('video_feed', name=name) }}" width="70%">
-					</div>
-					
-				</div>
-		</div>
+		
 		</div>
 		<div id="webMonitoring" class="tabcontent">
 			<h3>Screen Monitoring</h3>
-             <div class="container22">
-				    <form action="/start" method="POST">
-        <label for="server_ip">Server IP:</label>
-        <input type="text" id="server_ip" name="server_ip"><br><br>
-
-        <label for="server_port">Server Port:</label>
-        <input type="number" id="server_port" name="server_port"><br><br>
-
-        <input type="submit" value="Start Streaming">
-    </form>
-
-			 </div>
+             
+				<form action="/start_client" method="POST">
+					<label for="host">Host IP:</label>
+					<input type="text" id="host" name="host" required><br><br>
+			
+					<label for="port">Port:</label>
+					<input type="text" id="port" name="port" required><br><br>
+			
+					<input type="submit" value="Start Client">
+				</form>
+			
+			 
 		</div>
 
         
